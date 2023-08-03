@@ -3,9 +3,11 @@ package com.project.BusFlow.model;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cascade;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 @Entity
 @Table(name = "User_table")
 public class User {
@@ -62,5 +64,16 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", age=" + age +
+                '}';
     }
 }
