@@ -7,6 +7,7 @@ import com.project.BusFlow.payload.request.SignupRequest;
 import com.project.BusFlow.payload.response.SigninResponse;
 import com.project.BusFlow.payload.response.SignupResponse;
 import com.project.BusFlow.repository.UserRepository;
+import com.project.BusFlow.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,9 @@ public class UserController {
 
     @Autowired
     UserRepository userRepo;
+
+    @Autowired
+    UserService userService;
 
     @Autowired
     User user;
@@ -58,19 +62,29 @@ public class UserController {
     @PostMapping("/signin")
     ResponseEntity<SigninResponse> signIn(@RequestBody SigninRequest signinRequest){
 
-        User userSaved = userRepo.findByEmail(signinRequest.getEmail());
-        User userSaved1 = userRepo.findByPassword(signinRequest.getPassword());
-        System.out.println(userSaved);
-        System.out.println(userSaved1);
+//        System.out.println(signinRequest.getEmail() + " "+ signinRequest.getPassword());
+//        User userExists = userRepo.findByEmail(signinRequest.getEmail());
+//        User userSaved1 = userRepo.findByPassword(signinRequest.getPassword());
+//        System.out.println(userExists);
+//        System.out.println(userSaved1);
+//
+//        User userSaved2 = userRepo.findByEmailAndPassword(signinRequest.getEmail(), signinRequest.getPassword());
+//        System.out.println(userSaved2);
 
-        User userSaved2 = userRepo.findByEmailAndPassword(signinRequest.getEmail(), signinRequest.getPassword());
-        System.out.println(userSaved2);
 
+        Boolean userExists = userService.checkIfUserExists(signinRequest.getEmail(),signinRequest.getPassword());
 
-        signinResponse.setResponseCode(String.valueOf(HttpStatus.OK));
-        signinResponse.setResponseBody("SUCCESSFULLY SIGNED IN");
+        if(userExists){
 
-        return new ResponseEntity<>(signinResponse, HttpStatus.OK);
+            signinResponse.setResponseCode(String.valueOf(HttpStatus.OK));
+            signinResponse.setResponseBody("SUCCESSFULLY SIGNED IN");
+            return new ResponseEntity<>(signinResponse, HttpStatus.OK);
+        }
+        else {
+            signinResponse.setResponseCode(String.valueOf(HttpStatus.EXPECTATION_FAILED));
+            signinResponse.setResponseBody("NO ACCOUNT WITH THESE CREDENTIALS");
+            return new ResponseEntity<>(signinResponse, HttpStatus.EXPECTATION_FAILED);
+        }
 
     }
 
