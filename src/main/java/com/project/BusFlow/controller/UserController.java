@@ -2,10 +2,7 @@ package com.project.BusFlow.controller;
 
 
 import com.project.BusFlow.model.User;
-import com.project.BusFlow.payload.request.SigninRequest;
-import com.project.BusFlow.payload.request.SignupRequest;
-import com.project.BusFlow.payload.request.TokenPricesRequest;
-import com.project.BusFlow.payload.request.TotalPriceRequest;
+import com.project.BusFlow.payload.request.*;
 import com.project.BusFlow.payload.response.*;
 import com.project.BusFlow.repository.UserRepository;
 import com.project.BusFlow.service.TokenService;
@@ -45,6 +42,9 @@ public class UserController {
 
     @Autowired
     TokenPricesResponse tokenPricesResponse;
+
+    @Autowired
+    BuyTokensResponse buyTokensResponse;
 
     @PostMapping("/signup")
     ResponseEntity<SignupResponse> signUp(@RequestBody SignupRequest signupRequest){
@@ -142,6 +142,28 @@ public class UserController {
             tokenPricesResponse.setResponseBody("SUCCESSFULLY DISPLAYED TOKEN PRICES");
         }
         return new ResponseEntity<>(tokenPricesResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/buytokens")
+    ResponseEntity<BuyTokensResponse> buyTokens(@RequestBody BuyTokensRequest buyTokensRequest){
+
+        BuyTokensServiceResponse buyTokensService = tokenService.buyTokens(buyTokensRequest.getCode(), buyTokensRequest.getUserId());
+
+        if(buyTokensService.getCost() == null){
+
+            buyTokensResponse.setResponseCode(String.valueOf(HttpStatus.BAD_REQUEST));
+            buyTokensResponse.setResponseBody(String.valueOf("PURCHASE OF TOKENS FAILED"));
+            return new ResponseEntity<>(buyTokensResponse, HttpStatus.BAD_REQUEST);
+
+        }
+        else{
+            buyTokensResponse.setCost(String.valueOf(buyTokensService.getCost()));
+            buyTokensResponse.setTokens(String.valueOf(buyTokensService.getTokens()));
+            buyTokensResponse.setExpiryTime(String.valueOf(buyTokensService.getExpiry()));
+            buyTokensResponse.setResponseCode(String.valueOf(HttpStatus.OK));
+            buyTokensResponse.setResponseBody(String.valueOf("SUCCESSFULLY PURCHASED TOKENS"));
+            return new ResponseEntity<>(buyTokensResponse, HttpStatus.OK);
+        }
     }
 
 }

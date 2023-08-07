@@ -2,20 +2,23 @@ package com.project.BusFlow.model;
 
 
 import jakarta.persistence.*;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
+@Component
 @Entity
 @Table(name = "Token_table")
 public class Token {
 
     @Id
-    @SequenceGenerator(name = "seqGen", initialValue = 10001, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seqGen")
-    @Column(name = "Id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "school_id_seq")
+    @SequenceGenerator(name = "school_id_seq", sequenceName = "school_id_seq",  allocationSize=1)
+    @Column(name = "Id", unique = true)
     private long id;
-    @Column(name = "Type")
-    private String type;
+
+    @Column(name = "Token_Count")
+    private Integer tokenCount;
 
     @Column(name = "Balance")
     private Double Balance;
@@ -33,6 +36,34 @@ public class Token {
     @JoinColumn(name = "User_Id")
     User userObj;
 
+    public Token(Integer tokenCount, Double balance, boolean valid, LocalDate expireDate, LocalDate createDate, User userObj) {
+        this.tokenCount = tokenCount;
+        this.Balance = balance;
+        this.valid = valid;
+        this.expireDate = expireDate;
+        this.createDate = createDate;
+        this.userObj = userObj;
+    }
+
+    public Token() {
+    }
+
+    public User getUserObj() {
+        return userObj;
+    }
+
+    public void setUserObj(User userObj) {
+        this.userObj = userObj;
+    }
+
+    public Integer getTokenCount() {
+        return tokenCount;
+    }
+
+    public void setTokenCount(Integer tokenCount) {
+        this.tokenCount = tokenCount;
+    }
+
     public long getId() {
         return id;
     }
@@ -41,13 +72,7 @@ public class Token {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
-    }
 
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public Double getBalance() {
         return Balance;
