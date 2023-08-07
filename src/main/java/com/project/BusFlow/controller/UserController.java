@@ -4,17 +4,18 @@ package com.project.BusFlow.controller;
 import com.project.BusFlow.model.User;
 import com.project.BusFlow.payload.request.SigninRequest;
 import com.project.BusFlow.payload.request.SignupRequest;
-import com.project.BusFlow.payload.response.SigninResponse;
-import com.project.BusFlow.payload.response.SignupResponse;
+import com.project.BusFlow.payload.request.TokenPricesRequest;
+import com.project.BusFlow.payload.request.TotalPriceRequest;
+import com.project.BusFlow.payload.response.*;
 import com.project.BusFlow.repository.UserRepository;
+import com.project.BusFlow.service.TokenService;
 import com.project.BusFlow.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping("busflow")
@@ -28,6 +29,9 @@ public class UserController {
     UserService userService;
 
     @Autowired
+    TokenService tokenService;
+
+    @Autowired
     User user;
 
     @Autowired
@@ -35,6 +39,12 @@ public class UserController {
 
     @Autowired
     SigninResponse signinResponse;
+
+    @Autowired
+    TotalPriceResponse totalPriceResponse;
+
+    @Autowired
+    TokenPricesResponse tokenPricesResponse;
 
     @PostMapping("/signup")
     ResponseEntity<SignupResponse> signUp(@RequestBody SignupRequest signupRequest){
@@ -88,5 +98,50 @@ public class UserController {
 
     }
 
+    @GetMapping("/totalprice")
+    ResponseEntity<TotalPriceResponse> totalPrice(@RequestBody TotalPriceRequest totalPriceRequest){
+
+        TotalPriceServiceResponse priceResponse = tokenService.totalPrice(totalPriceRequest.getCity(),
+                totalPriceRequest.getStartPosition(),
+                totalPriceRequest.getStopPosition());
+
+        if (priceResponse.getTokens() == null){
+            totalPriceResponse.setTokensRequired("0");
+            totalPriceResponse.setTotalCharges("0 $");
+            totalPriceResponse.setResponseCode(String.valueOf(HttpStatus.BAD_REQUEST));
+            totalPriceResponse.setResponseBody("NO SUCH CITY OR BUS STOPS EXIST");
+            return new ResponseEntity<>(totalPriceResponse, HttpStatus.BAD_REQUEST);
+        }
+        else {
+            totalPriceResponse.setTokensRequired(priceResponse.getTokens());
+            totalPriceResponse.setTotalCharges(priceResponse.getTotalCharge());
+            totalPriceResponse.setResponseCode(String.valueOf(HttpStatus.OK));
+            totalPriceResponse.setResponseBody("SUCCESSFULLY CALCULATED TOTAL CHARGES");
+            return new ResponseEntity<>(totalPriceResponse, HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/tokenprices")
+    ResponseEntity<TokenPricesResponse> tokenPrices(@RequestBody TokenPricesRequest tokenPricesRequest){
+
+        TokenPricesServiceResponse prices = tokenService.tokenPrices(tokenPricesRequest.getCity());
+
+        if(prices.getOneToken() == null){
+
+            tokenPricesResponse.setResponseCode(String.valueOf(HttpStatus.BAD_REQUEST));
+            tokenPricesResponse.setResponseBody("NO SUCH CITY AVAILABLE");
+
+        }
+        else{
+            tokenPricesResponse.setOneToken(prices.getOneToken());
+            tokenPricesResponse.setOneMonth(prices.getOneMonth());
+            tokenPricesResponse.setThreeMonth(prices.getThreeMonth());
+            tokenPricesResponse.setSixMonth(prices.getSixMonth());
+            tokenPricesResponse.setOneYear(prices.getOneYear());
+            tokenPricesResponse.setResponseCode(String.valueOf(HttpStatus.OK));
+            tokenPricesResponse.setResponseBody("SUCCESSFULLY DISPLAYED TOKEN PRICES");
+        }
+        return new ResponseEntity<>(tokenPricesResponse, HttpStatus.OK);
+    }
 
 }
