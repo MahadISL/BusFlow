@@ -3,6 +3,8 @@ package com.project.BusFlow.repository;
 import com.project.BusFlow.model.User;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.UUID;
+
 public interface UserRepository extends CrudRepository<User, Integer> {
 
     User findByEmailAndPassword(String email, String password);
@@ -11,5 +13,11 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     Boolean existsByEmail(String email);
     Boolean existsByPassword(String password);
 
-    User findById(int userId);
+    User findByUsername(UUID userId);
+
+    UUID findUsernameByEmail(String email);
+
+    Integer deleteByUsername(UUID username);
+
+
 }

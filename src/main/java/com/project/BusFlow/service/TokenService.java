@@ -17,6 +17,8 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
 
 
 @Service
@@ -118,25 +120,27 @@ public class TokenService {
         return tokenPricesServiceResponse;
     }
 
-    public BuyTokensServiceResponse buyTokens(int code, int userId){
+    public BuyTokensServiceResponse buyTokens(int code, UUID userId){
 
         LocalDate localDate = LocalDate.now();
-        User userObj = userRepository.findById(userId);
+        User userObj = userRepository.findByUsername(userId);
 
 //        LocalTime localTime = LocalTime.now(ZoneId.of("Asia/Karachi"));
 
         switch (code) {
             case 4:
-                token.setId(2);
+                token.setId(0);
                 token.setTokenCount(1);
                 token.setBalance(4.00);
                 token.setCreateDate(localDate);
                 token.setExpireDate(localDate.plusYears(2));
                 token.setValid(true);
                 token.setUserObj(userObj);
+                token.setTokeCode(tokenCodeGeneration(userObj.getUsername()));
                 tokenRepository.save(token);
                 break;
             case 12:
+                token.setId(0);
                 token.setTokenCount(20);
                 token.setBalance(36.00);
                 token.setCreateDate(localDate);
@@ -146,6 +150,7 @@ public class TokenService {
                 tokenRepository.save(token);
                 break;
             case 32:
+                token.setId(0);
                 token.setTokenCount(60);
                 token.setBalance(90.00);
                 token.setCreateDate(localDate);
@@ -155,6 +160,7 @@ public class TokenService {
                 tokenRepository.save(token);
                 break;
             case 62:
+                token.setId(0);
                 token.setTokenCount(150);
                 token.setBalance(150.00);
                 token.setCreateDate(localDate);
@@ -164,6 +170,7 @@ public class TokenService {
                 tokenRepository.save(token);
                 break;
             case 104:
+                token.setId(0);
                 token.setTokenCount(300);
                 token.setBalance(450.00);
                 token.setCreateDate(localDate);
@@ -173,6 +180,7 @@ public class TokenService {
                 tokenRepository.save(token);
                 break;
             case 2:
+                token.setId(0);
                 token.setTokenCount(1);
                 token.setBalance(2.00);
                 token.setCreateDate(localDate);
@@ -182,6 +190,7 @@ public class TokenService {
                 tokenRepository.save(token);
                 break;
             case 14:
+                token.setId(0);
                 token.setTokenCount(20);
                 token.setBalance(60.00);
                 token.setCreateDate(localDate);
@@ -191,6 +200,7 @@ public class TokenService {
                 tokenRepository.save(token);
                 break;
             case 34:
+                token.setId(0);
                 token.setTokenCount(60);
                 token.setBalance(150.00);
                 token.setCreateDate(localDate);
@@ -200,6 +210,7 @@ public class TokenService {
                 tokenRepository.save(token);
                 break;
             case 64:
+                token.setId(0);
                 token.setTokenCount(150);
                 token.setBalance(300.00);
                 token.setCreateDate(localDate);
@@ -209,6 +220,7 @@ public class TokenService {
                 tokenRepository.save(token);
                 break;
             case 102:
+                token.setId(0);
                 token.setTokenCount(300);
                 token.setBalance(240.00);
                 token.setCreateDate(localDate);
@@ -225,5 +237,18 @@ public class TokenService {
         buyTokensServiceResponse.setExpiry(token.getExpireDate());
         buyTokensServiceResponse.setTokens(token.getTokenCount());
         return buyTokensServiceResponse;
+    }
+
+    private String tokenCodeGeneration(UUID username){
+        String uuidString = username.toString();
+        Random random = new Random();
+
+        int randomInt = 2000 + random.nextInt(30000);
+        int randomInt2 = 4000 + random.nextInt(60000);
+        String halfUuidString = uuidString.substring(0,uuidString.length()/2);
+
+        String tokenCode = String.valueOf(randomInt) + halfUuidString + String.valueOf(randomInt2);
+
+        return tokenCode;
     }
 }

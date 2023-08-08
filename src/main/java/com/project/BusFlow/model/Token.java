@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Component
 @Entity
@@ -14,7 +15,7 @@ public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "school_id_seq")
     @SequenceGenerator(name = "school_id_seq", sequenceName = "school_id_seq",  allocationSize=1)
-    @Column(name = "Id", unique = true)
+    @Column(name = "Id", unique = true, updatable=false)
     private long id;
 
     @Column(name = "Token_Count")
@@ -32,6 +33,9 @@ public class Token {
     @Column(name = "Create_Date")
     private LocalDate createDate;
 
+    @Column(unique = true, name = "Token_Code")
+    private String tokeCode;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "User_Id")
     User userObj;
@@ -46,6 +50,14 @@ public class Token {
     }
 
     public Token() {
+    }
+
+    public String getTokeCode() {
+        return tokeCode;
+    }
+
+    public void setTokeCode(String tokeCode) {
+        this.tokeCode = tokeCode;
     }
 
     public User getUserObj() {

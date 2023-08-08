@@ -1,9 +1,11 @@
 package com.project.BusFlow.payload.request;
 
+import java.util.UUID;
+
 public class BuyTokensRequest {
 
     private int code;
-    private int userId;
+    private UUID userId;
 
     public int getCode() {
         return code;
@@ -13,11 +15,11 @@ public class BuyTokensRequest {
         this.code = code;
     }
 
-    public int getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 }

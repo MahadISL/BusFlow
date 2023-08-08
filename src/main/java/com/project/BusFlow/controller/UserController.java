@@ -7,12 +7,11 @@ import com.project.BusFlow.payload.response.*;
 import com.project.BusFlow.repository.UserRepository;
 import com.project.BusFlow.service.TokenService;
 import com.project.BusFlow.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Objects;
 
 @RestController
 @RequestMapping("busflow")
@@ -46,17 +45,27 @@ public class UserController {
     @Autowired
     BuyTokensResponse buyTokensResponse;
 
+    @Autowired
+    FetchUsernameResponse fetchUsernameResponse;
+
+    @Autowired
+    DeleteUserResponse deleteUserResponse;
+
     @PostMapping("/signup")
     ResponseEntity<SignupResponse> signUp(@RequestBody SignupRequest signupRequest){
 
-        user.setName(signupRequest.getName());
-        user.setEmail(signupRequest.getEmail());
-        user.setPassword(signupRequest.getPassword());
-        user.setAge(signupRequest.getAge());
+        userService.saveUser(signupRequest);
+
+//        user.setName(signupRequest.getName());
+//        user.setEmail(signupRequest.getEmail());
+//        user.setPassword(signupRequest.getPassword());
+//        user.setAge(signupRequest.getAge());
 
         System.out.println(user);
 
-        User userSaved = userRepo.save(user);
+//        if(!userRepo.existsByEmail(signupRequest.getEmail())) {
+//            User userSaved = userRepo.save(user);
+//        }
 
         signupResponse.setName(user.getName());
         signupResponse.setEmail(user.getEmail());
@@ -164,6 +173,36 @@ public class UserController {
             buyTokensResponse.setResponseBody(String.valueOf("SUCCESSFULLY PURCHASED TOKENS"));
             return new ResponseEntity<>(buyTokensResponse, HttpStatus.OK);
         }
+    }
+
+    @GetMapping("/fetchusername")
+    ResponseEntity<FetchUsernameResponse> fetchUsername(@RequestBody FetchUsernameRequest fetchUsernameRequest){
+
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        getPrincipal()
+
+        //Principal principal
+//        principal.getName()
+        User user1 = userRepo.findByEmail(fetchUsernameRequest.getEmail());
+        System.out.println(user1);
+        fetchUsernameResponse.setUsername(user1.getUsername());
+        fetchUsernameResponse.setResponseCode(String.valueOf(HttpStatus.OK));
+        fetchUsernameResponse.setResponseBody("SUCCESSFULLY FETCHED USERNAME");
+
+        return new ResponseEntity<>(fetchUsernameResponse, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteuser")
+    @Transactional
+    ResponseEntity<DeleteUserResponse> deleteUser(@RequestBody DeleteUserRequest deleteUserRequest){
+
+        Integer deletedUser = userRepo.deleteByUsername(deleteUserRequest.getUsername());
+
+//        deleteUserResponse.setName();
+        deleteUserResponse.setResponseCode(String.valueOf(HttpStatus.OK));
+        deleteUserResponse.setResponseBody("SUCCESSFULLY DELETED USER");
+
+        return new ResponseEntity<>(deleteUserResponse, HttpStatus.OK);
     }
 
 }
