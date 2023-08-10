@@ -2,6 +2,8 @@ package com.project.BusFlow.model;
 
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -36,9 +38,14 @@ public class Token {
     @Column(unique = true, name = "Token_Code")
     private String tokeCode;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "User_Id")
     User userObj;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "Wallet_Id")
+    Wallet walletObj;
 
     public Token(Integer tokenCount, Double balance, boolean valid, LocalDate expireDate, LocalDate createDate, User userObj) {
         this.tokenCount = tokenCount;

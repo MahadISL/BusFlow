@@ -1,17 +1,22 @@
 package com.project.BusFlow.controller;
 
 
+import com.project.BusFlow.model.Token;
 import com.project.BusFlow.model.User;
 import com.project.BusFlow.payload.request.*;
 import com.project.BusFlow.payload.response.*;
+import com.project.BusFlow.repository.TokenRepository;
 import com.project.BusFlow.repository.UserRepository;
 import com.project.BusFlow.service.TokenService;
 import com.project.BusFlow.service.UserService;
+import com.project.BusFlow.service.WalletService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("busflow")
@@ -22,10 +27,16 @@ public class UserController {
     UserRepository userRepo;
 
     @Autowired
+    TokenRepository tokenRepository;
+
+    @Autowired
     UserService userService;
 
     @Autowired
     TokenService tokenService;
+
+    @Autowired
+    WalletService walletService;
 
     @Autowired
     User user;
@@ -158,7 +169,12 @@ public class UserController {
 
         BuyTokensServiceResponse buyTokensService = tokenService.buyTokens(buyTokensRequest.getCode(), buyTokensRequest.getUserId());
 
-        if(buyTokensService.getCost() == null){
+        User user = userRepo.findByUsername(buyTokensRequest.getUserId());
+        Boolean bought = walletService.calculateBalance(user,
+                buyTokensService.getTokens(),
+                buyTokensService.getCost(),
+                buyTokensRequest.getUserId());
+        if(buyTokensService.getCost() == null && !bought ){
 
             buyTokensResponse.setResponseCode(String.valueOf(HttpStatus.BAD_REQUEST));
             buyTokensResponse.setResponseBody(String.valueOf("PURCHASE OF TOKENS FAILED"));
@@ -166,6 +182,7 @@ public class UserController {
 
         }
         else{
+
             buyTokensResponse.setCost(String.valueOf(buyTokensService.getCost()));
             buyTokensResponse.setTokens(String.valueOf(buyTokensService.getTokens()));
             buyTokensResponse.setExpiryTime(String.valueOf(buyTokensService.getExpiry()));
@@ -196,9 +213,13 @@ public class UserController {
     @Transactional
     ResponseEntity<DeleteUserResponse> deleteUser(@RequestBody DeleteUserRequest deleteUserRequest){
 
+        User deletedTokensUser = tokenService.deleteToken(deleteUserRequest.getUsername());
+
+        //Integer deletedTokenUsername = tokenRepository.deleteByUserObj(deleteUserRequest.getUsername());
+
         Integer deletedUser = userRepo.deleteByUsername(deleteUserRequest.getUsername());
 
-//        deleteUserResponse.setName();
+        deleteUserResponse.setName(deletedTokensUser.getName());
         deleteUserResponse.setResponseCode(String.valueOf(HttpStatus.OK));
         deleteUserResponse.setResponseBody("SUCCESSFULLY DELETED USER");
 

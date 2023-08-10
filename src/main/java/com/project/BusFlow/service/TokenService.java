@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -26,6 +23,9 @@ public class TokenService {
 
     @Autowired
     TotalPriceServiceResponse totalPriceServiceResponse;
+
+    @Autowired
+    WalletService walletService;
 
     @Autowired
     TokenPricesServiceResponse tokenPricesServiceResponse;
@@ -250,5 +250,18 @@ public class TokenService {
         String tokenCode = String.valueOf(randomInt) + halfUuidString + String.valueOf(randomInt2);
 
         return tokenCode;
+    }
+
+    public User deleteToken(UUID username){
+
+        User foundUser = userRepository.findByUsername(username);
+
+        List<Token> foundTokens = tokenRepository.findByUserObj(foundUser);
+
+        // Delete all the tokens for particular username
+        for(Token token: foundTokens){
+            Integer val = tokenRepository.deleteById(token.getId());
+        }
+        return foundUser;
     }
 }

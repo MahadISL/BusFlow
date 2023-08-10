@@ -4,6 +4,8 @@ package com.project.BusFlow.model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -42,9 +44,12 @@ public class User {
     @Column(name = "Age")
     private int age;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Token> tokenList;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    Wallet walletObj;
 
     public int getAge() {
         return age;
