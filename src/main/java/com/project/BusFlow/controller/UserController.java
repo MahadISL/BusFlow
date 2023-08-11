@@ -62,6 +62,9 @@ public class UserController {
     @Autowired
     DeleteUserResponse deleteUserResponse;
 
+    @Autowired
+    AddBalanceResponse addBalanceResponse;
+
     @PostMapping("/signup")
     ResponseEntity<SignupResponse> signUp(@RequestBody SignupRequest signupRequest){
 
@@ -224,6 +227,18 @@ public class UserController {
         deleteUserResponse.setResponseBody("SUCCESSFULLY DELETED USER");
 
         return new ResponseEntity<>(deleteUserResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/createWallet")
+    ResponseEntity<?> createWallet(@RequestBody AddBalanceRequest addBalanceRequest){
+
+        walletService.createWallet(addBalanceRequest.getBalance(), addBalanceRequest.getUsername());
+
+        addBalanceResponse.setBalance(addBalanceRequest.getBalance());
+        addBalanceResponse.setResponseCode(String.valueOf(HttpStatus.OK));
+        addBalanceResponse.setResponseBody("SUCCESSFULLY ADDED BALANCE");
+
+        return  new ResponseEntity<>(addBalanceResponse,HttpStatus.OK);
     }
 
 }

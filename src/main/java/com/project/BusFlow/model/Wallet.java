@@ -1,11 +1,13 @@
 package com.project.BusFlow.model;
 
 import jakarta.persistence.*;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Entity
 @Table(name = "Wallet_table")
+@Component
 public class Wallet {
 
     @Id

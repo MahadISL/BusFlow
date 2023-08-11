@@ -18,6 +18,9 @@ public class WalletService {
     @Autowired
     UserRepository userRepo;
 
+    @Autowired
+    Wallet wallet;
+
     public Boolean calculateBalance(User user, Integer tokenCount,Double tokenBalance, UUID userID){
 
         Wallet wallet = walletRepo.findByUserObj(user);
@@ -33,10 +36,15 @@ public class WalletService {
 //        Double currentBalance1 = user1.getBalance();
 
         // Calculating and updating new balance in user account
-        currentBalance = currentBalance + amountTransferred;
+        currentBalance = currentBalance - amountTransferred;
         wallet.setBalance(currentBalance);
 
-        currentTokens = currentTokens + tokensBought;
+        if(currentTokens !=null) {
+            currentTokens = currentTokens + tokensBought;
+        }
+        else{
+            currentTokens = tokensBought;
+        }
         wallet.setTokens(currentTokens);
 
         User userObj = userRepo.findByUsername(userID);
@@ -51,5 +59,17 @@ public class WalletService {
 
         return true;
 
+    }
+
+    public void createWallet(Double balance, UUID username){
+        User user = userRepo.findByUsername(username);
+
+        if(user != null) {
+
+            wallet.setUserObj(user);
+            wallet.setBalance(balance);
+//        wallet.setTokens(tokens);
+            walletRepo.save(wallet);
+        }
     }
 }

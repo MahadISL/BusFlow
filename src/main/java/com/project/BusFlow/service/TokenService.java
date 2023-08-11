@@ -147,6 +147,7 @@ public class TokenService {
                 token.setExpireDate(localDate.plusMonths(1));
                 token.setValid(true);
                 token.setUserObj(userObj);
+                token.setTokeCode(tokenCodeGeneration(userObj.getUsername()));
                 tokenRepository.save(token);
                 break;
             case 32:
@@ -157,6 +158,7 @@ public class TokenService {
                 token.setExpireDate(localDate.plusMonths(3));
                 token.setValid(true);
                 token.setUserObj(userObj);
+                token.setTokeCode(tokenCodeGeneration(userObj.getUsername()));
                 tokenRepository.save(token);
                 break;
             case 62:
@@ -167,6 +169,7 @@ public class TokenService {
                 token.setExpireDate(localDate.plusMonths(6));
                 token.setValid(true);
                 token.setUserObj(userObj);
+                token.setTokeCode(tokenCodeGeneration(userObj.getUsername()));
                 tokenRepository.save(token);
                 break;
             case 104:
@@ -177,6 +180,7 @@ public class TokenService {
                 token.setExpireDate(localDate.plusYears(1));
                 token.setValid(true);
                 token.setUserObj(userObj);
+                token.setTokeCode(tokenCodeGeneration(userObj.getUsername()));
                 tokenRepository.save(token);
                 break;
             case 2:
@@ -187,6 +191,7 @@ public class TokenService {
                 token.setExpireDate(localDate.plusYears(2));
                 token.setValid(true);
                 token.setUserObj(userObj);
+                token.setTokeCode(tokenCodeGeneration(userObj.getUsername()));
                 tokenRepository.save(token);
                 break;
             case 14:
@@ -197,6 +202,7 @@ public class TokenService {
                 token.setExpireDate(localDate.plusMonths(1));
                 token.setValid(true);
                 token.setUserObj(userObj);
+                token.setTokeCode(tokenCodeGeneration(userObj.getUsername()));
                 tokenRepository.save(token);
                 break;
             case 34:
@@ -207,6 +213,7 @@ public class TokenService {
                 token.setExpireDate(localDate.plusMonths(3));
                 token.setValid(true);
                 token.setUserObj(userObj);
+                token.setTokeCode(tokenCodeGeneration(userObj.getUsername()));
                 tokenRepository.save(token);
                 break;
             case 64:
@@ -217,6 +224,7 @@ public class TokenService {
                 token.setExpireDate(localDate.plusMonths(6));
                 token.setValid(true);
                 token.setUserObj(userObj);
+                token.setTokeCode(tokenCodeGeneration(userObj.getUsername()));
                 tokenRepository.save(token);
                 break;
             case 102:
@@ -227,6 +235,7 @@ public class TokenService {
                 token.setExpireDate(localDate.plusYears(1));
                 token.setValid(true);
                 token.setUserObj(userObj);
+                token.setTokeCode(tokenCodeGeneration(userObj.getUsername()));
                 tokenRepository.save(token);
 
                 break;
